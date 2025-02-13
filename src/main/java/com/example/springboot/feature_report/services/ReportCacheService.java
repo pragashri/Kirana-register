@@ -52,7 +52,7 @@ public class ReportCacheService {
         Report report = transactionService.generateReport(startDate, now);
 
         // Store in cache
-        cacheService.put(cacheKey, report);
+        cacheService.put(cacheKey, report, 3600);
         return report;
     }
 }

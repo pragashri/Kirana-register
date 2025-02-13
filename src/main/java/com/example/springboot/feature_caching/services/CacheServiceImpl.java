@@ -17,7 +17,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public <T> void put(String key, T value) {
+    public <T> void put(String key, T value, int i) {
         redisTemplate.opsForValue().set(key, value, 1, TimeUnit.HOURS); // Cache for 1 hour
         System.out.println("📝 Cache PUT: " + key + " => " + value);
     }

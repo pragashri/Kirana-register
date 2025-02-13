@@ -15,10 +15,8 @@ import com.example.springboot.feature_transactions.dao.TransactionDao;
 import com.example.springboot.feature_products.repo.ProductRepo;
 import com.example.springboot.feature_registry.repo.StoreRegistryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.cache.annotation.CacheEvict;
 
 
 import java.time.LocalDateTime;
@@ -114,19 +112,19 @@ public class TransactionServiceImpl implements TransactionService {
         // Weekly Report
         LocalDateTime oneWeekAgo = now.minusWeeks(1);
         Report weeklyReport = generateReport(oneWeekAgo, now);
-        cacheService.put("report_weekly", weeklyReport);
+        cacheService.put("report_weekly", weeklyReport, 3600);
         System.out.println("✅ Cached Weekly Report: " + weeklyReport);
 
         // Monthly Report
         LocalDateTime oneMonthAgo = now.minusMonths(1);
         Report monthlyReport = generateReport(oneMonthAgo, now);
-        cacheService.put("report_monthly", monthlyReport);
+        cacheService.put("report_monthly", monthlyReport, 3600);
         System.out.println("✅ Cached Monthly Report: " + monthlyReport);
 
         // Yearly Report
         LocalDateTime oneYearAgo = now.minusYears(1);
         Report yearlyReport = generateReport(oneYearAgo, now);
-        cacheService.put("report_yearly", yearlyReport);
+        cacheService.put("report_yearly", yearlyReport, 3600);
         System.out.println("✅ Cached Yearly Report: " + yearlyReport);
     }
 

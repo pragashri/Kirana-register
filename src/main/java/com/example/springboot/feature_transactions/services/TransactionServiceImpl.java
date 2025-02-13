@@ -1,25 +1,28 @@
 package com.example.springboot.feature_transactions.services;
 
+import com.example.springboot.feature_caching.services.CacheService;
 import com.example.springboot.feature_products.entities.Product;
 import com.example.springboot.feature_products.enums.Category;
+import com.example.springboot.feature_report.models.Report;
+import com.example.springboot.feature_report.services.ReportCacheService;
+import com.example.springboot.feature_report.utils.ReportUtils;
 import com.example.springboot.feature_transactions.enums.TransactionType;
 import com.example.springboot.feature_transactions.helpers.TransactionHelper;
 import com.example.springboot.feature_transactions.repo.TransactionRepo;
-import com.example.springboot.feature_transactions.utils.TransactionUtils;
-import com.example.springboot.model.StoreRegistry;
+import com.example.springboot.feature_registry.entities.StoreRegistry;
 import com.example.springboot.feature_transactions.entities.Transaction;
 import com.example.springboot.feature_transactions.dao.TransactionDao;
 import com.example.springboot.feature_products.repo.ProductRepo;
-import com.example.springboot.repository.KiranaRegistryRepository;
+import com.example.springboot.feature_registry.repo.StoreRegistryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cache.annotation.CacheEvict;
+
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.springboot.feature_transactions.constants.TransactionsConstants.INR_CURRENCY;
 
@@ -29,16 +32,18 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepo transactionRepo;
     private final ProductRepo productRepo;
     private final TransactionHelper transactionHelper;
-    private final KiranaRegistryRepository kiranaRegistryRepository;
+    private final StoreRegistryRepo storeRegistryRepo;
+    private final CacheService cacheService;
 
     @Autowired
     public TransactionServiceImpl(TransactionDao transactionDao, TransactionRepo transactionRepo, ProductRepo productRepo,
-                                  TransactionHelper transactionHelper, KiranaRegistryRepository kiranaRegistryRepository) {
+                                  TransactionHelper transactionHelper, StoreRegistryRepo storeRegistryRepo, @Lazy ReportCacheService reportCacheService1, CacheService cacheService) {
         this.transactionDao = transactionDao;
         this.transactionRepo = transactionRepo;
         this.productRepo = productRepo;
         this.transactionHelper = transactionHelper;
-        this.kiranaRegistryRepository = kiranaRegistryRepository;
+        this.storeRegistryRepo = storeRegistryRepo;
+        this.cacheService = cacheService;
     }
 
     @Override
@@ -47,17 +52,28 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction createTransaction(Transaction transaction) {
-        StoreRegistry registry = kiranaRegistryRepository.findFirstByOrderByIdDesc();
+//    @CacheEvict(value = "reports", allEntries = true)
 
+    public Transaction updateTransactionDetails(Transaction transaction) {
+        StoreRegistry registry = storeRegistryRepo.findFirstByOrderByIdDesc();
         if (registry == null) {
             registry = new StoreRegistry();
-            kiranaRegistryRepository.save(registry);
         }
 
         Product product = productRepo.findByIdAndCategory(transaction.getProductId(), Category.GROCERY);
         if (product == null) {
             throw new RuntimeException("Product not found!");
+        }
+
+        double sum = transaction.getQuantity() * product.getPrice();
+        transaction.setSum(sum);
+
+        // Use helper class for INR conversion
+        if (!INR_CURRENCY.equals(transaction.getCurrency())) {
+            double convertedPrice = transactionHelper.convertToINR(sum, transaction.getCurrency());
+            transaction.setAmountInINR(convertedPrice);
+        } else {
+            transaction.setAmountInINR(sum);
         }
 
         if (transaction.getTransactionType() == TransactionType.CREDIT) {
@@ -71,72 +87,47 @@ public class TransactionServiceImpl implements TransactionService {
             registry = transactionHelper.updateRegistryWhenDebitTransaction(registry, transaction);
         }
 
+        Transaction savedTransaction = transactionRepo.save(transaction);
         productRepo.save(product);
+        storeRegistryRepo.save(registry);
+        cacheService.evict("report_weekly");
+        cacheService.evict("report_monthly");
+        cacheService.evict("report_yearly");
 
-        double sum = transaction.getQuantity() * product.getPrice();
-        transaction.setSum(sum);
+        regenerateReportsCache();
 
-        if (!INR_CURRENCY.equals(transaction.getCurrency())) {
-            double convertedPrice = convertToINR(sum, transaction.getCurrency());
-            transaction.setAmountInINR(convertedPrice);
-        } else {
-            transaction.setAmountInINR(sum);
-        }
-
-        transaction = transactionRepo.save(transaction);
-        kiranaRegistryRepository.save(registry);
-
-        return transaction;
-    }
-
-    private double convertToINR(double amount, String currency) {
-        if (INR_CURRENCY.equalsIgnoreCase(currency)) {
-            return amount;
-        }
-
-        try {
-            String apiUrl = "https://api.fxratesapi.com/latest";
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.getForEntity(apiUrl, Map.class);
-
-            if (response.getBody() != null && (boolean) response.getBody().get("success")) {
-                Map<String, Double> rates = (Map<String, Double>) response.getBody().get("rates");
-                double usdToInrRate = rates.get(INR_CURRENCY);
-                return amount * usdToInrRate;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Currency conversion failed: " + e.getMessage());
-        }
-
-        return amount;
+        return savedTransaction;
     }
 
     @Override
-    public Map<String, Double> generateReport(LocalDateTime startDate, LocalDateTime endDate) {
+//    @Cacheable(value = "reports", key = "#startDate.toString().concat('-').concat(#endDate.toString())")
+
+    public Report generateReport(LocalDateTime startDate, LocalDateTime endDate) {
+        System.out.println("Fetching report from DB..."); // Debugging line to confirm caching
         List<Transaction> transactions = transactionDao.findTransactionsBetween(startDate, endDate);
-        double totalAmount = 0, totalCredits = 0, totalDebits = 0, creditedAmount = 0, debitedAmount = 0;
-        double creditCount = 0, debitCount = 0;
-
-        for (Transaction transaction : transactions) {
-            totalAmount += transaction.getAmountInINR();
-            if (transaction.getTransactionType() == TransactionType.CREDIT) {
-                totalCredits += transaction.getSum();
-                creditedAmount += transaction.getAmountInINR();
-                creditCount++;
-            } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
-                totalDebits += transaction.getSum();
-                debitedAmount += transaction.getAmountInINR();
-                debitCount++;
-            }
-        }
-
-        Map<String, Double> report = new HashMap<>();
-        report.put("Net Current Amount" , creditedAmount - debitedAmount);
-        report.put("Total Transactions Amount", totalAmount);
-        report.put("Total Credits", creditCount);
-        report.put("Total Debits", debitCount);
-        report.put("Total Credited Amount", creditedAmount);
-        report.put("Total Debited Amount", debitedAmount);
-        return report;
+        return ReportUtils.finalizeReport(transactions); // Using ReportUtils for final calculations
     }
+
+    private void regenerateReportsCache() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // Weekly Report
+        LocalDateTime oneWeekAgo = now.minusWeeks(1);
+        Report weeklyReport = generateReport(oneWeekAgo, now);
+        cacheService.put("report_weekly", weeklyReport);
+        System.out.println("✅ Cached Weekly Report: " + weeklyReport);
+
+        // Monthly Report
+        LocalDateTime oneMonthAgo = now.minusMonths(1);
+        Report monthlyReport = generateReport(oneMonthAgo, now);
+        cacheService.put("report_monthly", monthlyReport);
+        System.out.println("✅ Cached Monthly Report: " + monthlyReport);
+
+        // Yearly Report
+        LocalDateTime oneYearAgo = now.minusYears(1);
+        Report yearlyReport = generateReport(oneYearAgo, now);
+        cacheService.put("report_yearly", yearlyReport);
+        System.out.println("✅ Cached Yearly Report: " + yearlyReport);
+    }
+
 }

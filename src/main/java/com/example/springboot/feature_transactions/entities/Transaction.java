@@ -1,5 +1,6 @@
 package com.example.springboot.feature_transactions.entities;
 
+import com.example.springboot.feature_transactions.enums.TransactionStatusType;
 import com.example.springboot.feature_transactions.enums.TransactionType;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Data
-@Document(collection = "transaction")
+@Document()
 public class Transaction {
 
     @Id private String id;
@@ -22,7 +23,7 @@ public class Transaction {
     private String currency;
     private double amountInINR;
     private double amountInUSD;
-    private String transactionStatus;
+    private TransactionStatusType transactionStatus;
     private TransactionType transactionType;
 
     @CreatedDate

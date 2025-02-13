@@ -49,8 +49,11 @@ dependencies {
     // Testing dependencies (optional)
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    implementation 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok:1.18.30'  // Use the latest version
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 }
 
 test {

@@ -6,7 +6,7 @@ import com.example.springboot.feature_products.enums.Category;
 public interface ProductService {
 
     /**
-     *
+     * interface for adding product details
      *
      * @param product
      * @return
@@ -14,7 +14,7 @@ public interface ProductService {
     Product updateProductDetails(Product product);
 
     /**
-     *
+     * interface for fetching product details
      *
      * @param id
      * @param category

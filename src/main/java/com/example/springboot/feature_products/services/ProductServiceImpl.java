@@ -16,7 +16,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     *
+     * implementation for updating the details of a product through dao
      *
      * @param product
      * @return
@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     *
+     * implementation of fetching product detail through dao
      *
      * @param id
      * @param category

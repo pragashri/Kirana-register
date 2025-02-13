@@ -17,14 +17,36 @@ public class TransactionDao {
         this.transactionRepo = transactionRepo;
     }
 
+
+    /**
+     * interacts with repo to find transaction by id
+     *
+     * @param id
+     * @return
+     */
     public Transaction findById(String id) {
         return transactionRepo.findById(id);
     }
 
+
+    /**
+     * interacts with the repo to save a transaction
+     *
+     * @param transaction
+     * @return
+     */
     public Transaction save(Transaction transaction) {
         return transactionRepo.save(transaction);
     }
 
+
+    /**
+     * interacts with the repo to find the transactions between two dates
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     public List<Transaction> findTransactionsBetween(LocalDateTime startDate, LocalDateTime endDate) {
         return transactionRepo.findTransactionsBetween(startDate, endDate);
     }

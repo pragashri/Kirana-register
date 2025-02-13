@@ -18,7 +18,7 @@ public class ProductController {
     }
 
     /**
-     *
+     * Product details are added to the DB
      *
      * @param product
      * @return
@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     /**
-     *
+     * A product detail can be found through this API using id and category of the product
      *
      * @param id
      * @return

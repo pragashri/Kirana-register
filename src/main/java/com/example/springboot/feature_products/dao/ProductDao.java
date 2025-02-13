@@ -16,7 +16,7 @@ public class ProductDao {
     }
 
     /**
-     *
+     * Interacts with the repo to find details of the product
      *
      * @param id
      * @return
@@ -26,7 +26,7 @@ public class ProductDao {
     }
 
     /**
-     *
+     * saves the product to the DB through repo
      *
      * @param product
      * @return

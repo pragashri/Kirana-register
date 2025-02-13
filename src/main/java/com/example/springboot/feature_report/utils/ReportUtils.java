@@ -23,12 +23,13 @@ public class ReportUtils {
         double debitedAmount = 0;
 
         for (Transaction transaction : transactions) {
-            totalAmount += transaction.getAmountInINR();
+
             if (transaction.getTransactionType() == TransactionType.CREDIT) {
                 creditedAmount += transaction.getAmountInINR();
             } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
                 debitedAmount += transaction.getAmountInINR();
             }
+            totalAmount = creditedAmount-debitedAmount;
         }
 
         Report report = new Report();

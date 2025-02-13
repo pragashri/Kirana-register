@@ -72,14 +72,7 @@ public class TransactionHelper {
         return registry;
     }
 
-    /**
-     * Converts the given amount to INR if it's in a different currency.
-     * Uses an external API for conversion rates.
-     *
-     * @param amount   The amount to convert.
-     * @param currency The current currency of the amount.
-     * @return The converted amount in INR.
-     */
+
     /**
      * Converts the given amount to INR if it's in a different currency.
      * Uses an external API for conversion rates, with caching in Redis.

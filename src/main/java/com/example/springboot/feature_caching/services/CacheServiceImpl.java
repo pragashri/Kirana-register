@@ -1,6 +1,6 @@
 package com.example.springboot.feature_caching.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.springboot.feature_caching.services.CacheService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,36 +11,30 @@ public class CacheServiceImpl implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
     public CacheServiceImpl(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     @Override
-    public <T> void put(String key, T value, int i) {
-        redisTemplate.opsForValue().set(key, value, 1, TimeUnit.HOURS); // Cache for 1 hour
-        System.out.println("📝 Cache PUT: " + key + " => " + value);
+    public void put(String key, Object value, long expirationInSeconds) {
+        redisTemplate.opsForValue().set(key, value, expirationInSeconds, TimeUnit.SECONDS);
     }
 
     @Override
-    public <T> T get(String key, Class<T> type) {
+    public <T> T get(String key, Class<T> clazz) {
         Object value = redisTemplate.opsForValue().get(key);
-        if (value == null) {
-            System.out.println("Cache MISS for key: " + key);
-            return null;
-        }
-        System.out.println("🔍 Cache GET: " + key + " => " + value);
-        return type.cast(value);
+        return clazz.cast(value);
     }
 
     @Override
     public void evict(String key) {
         redisTemplate.delete(key);
-        System.out.println("❌ Cache EVICT: " + key);
     }
 
     @Override
-    public void evictAll() {
-        redisTemplate.getConnectionFactory().getConnection().flushDb();
+    public void evictReportCache() {
+        evict("report_weekly");
+        evict("report_monthly");
+        evict("report_yearly");
     }
 }

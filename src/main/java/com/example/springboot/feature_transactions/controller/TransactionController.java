@@ -2,6 +2,7 @@ package com.example.springboot.feature_transactions.controller;
 
 import com.example.springboot.feature_report.enums.ReportType;
 import com.example.springboot.feature_report.models.Report;
+import com.example.springboot.feature_report.services.ReportService;
 import com.example.springboot.feature_transactions.entities.Transaction;
 import com.example.springboot.feature_transactions.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,12 @@ import java.util.Map;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final ReportService reportService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, ReportService reportService) {
         this.transactionService = transactionService;
+        this.reportService = reportService;
     }
 
 
@@ -68,6 +71,6 @@ public class TransactionController {
             default:
                 throw new IllegalArgumentException("Invalid report type");
         }
-        return transactionService.generateReport(startDate, now);
+        return reportService.generateReport(reportType,startDate, now);
     }
 }

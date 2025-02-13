@@ -1,39 +1,50 @@
 package com.example.springboot.feature_report.services;
 
+import com.example.springboot.feature_caching.services.CacheService;
 import com.example.springboot.feature_report.enums.ReportType;
 import com.example.springboot.feature_report.models.Report;
-import com.example.springboot.feature_transactions.services.TransactionService;
+import com.example.springboot.feature_report.services.ReportService;
+import com.example.springboot.feature_report.utils.ReportUtils;
+import com.example.springboot.feature_transactions.dao.TransactionDao;
+import com.example.springboot.feature_transactions.entities.Transaction;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private final TransactionService transactionService;
+    private final TransactionDao transactionDao;
+    private final CacheService cacheService;
 
-    public ReportServiceImpl(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public ReportServiceImpl(TransactionDao transactionDao, CacheService cacheService) {
+        this.transactionDao = transactionDao;
+        this.cacheService = cacheService;
     }
 
     @Override
-    public Report generateReport(ReportType reportType) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate;
+    public Report generateReport(ReportType reportType, LocalDateTime startDate, LocalDateTime endDate) {
+        String cacheKey = "report_" + reportType.name();
 
-        switch (reportType) {
-            case WEEKLY:
-                startDate = now.minusWeeks(1);
-                break;
-            case MONTHLY:
-                startDate = now.minusMonths(1);
-                break;
-            case YEARLY:
-                startDate = now.minusYears(1);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid report type: " + reportType);
+        Report cachedReport = cacheService.get(cacheKey, Report.class);
+        if (cachedReport != null) {
+            System.out.println("Fetching report from cache...");
+            return cachedReport;
+        }
+        else{
+            System.out.println("Fetching report from DB...");
+            List<Transaction> transactions = transactionDao.findTransactionsBetween(startDate, endDate);
+            Report report = ReportUtils.finalizeReport(transactions);
+
+            System.out.println("Setting " + report + " cache...");
+            cacheService.put(cacheKey, report, 3600);
+            return report;
         }
 
-        return transactionService.generateReport(startDate, now);
+
+
+
     }
+
 }

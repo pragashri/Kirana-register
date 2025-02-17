@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class Transaction {
 
     @Id private String id;
-    private String employeeId;
-    private String ownerId;
+//    private String employeeId;
+//    private String ownerId;
     private String productId;
     private int quantity;
     private double sum;

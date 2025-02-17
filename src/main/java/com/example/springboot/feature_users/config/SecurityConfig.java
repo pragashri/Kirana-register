@@ -1,4 +1,4 @@
-package com.example.springboot.config;
+package com.example.springboot.feature_users.config;
 
 import com.example.springboot.feature_users.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
@@ -35,21 +35,25 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter)
             throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        auth ->
-                                auth.requestMatchers("/users/login", "/users/register","/actuator/**")
-                                        .permitAll()
-                                        .anyRequest()
-                                        .authenticated())
-                .sessionManagement(
-                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/login", "/users/register", "/actuator/**")
+                        .permitAll()
+
+                        // 👇 Allow Employees (USER) to create only CREDIT transactions
+                        .requestMatchers("/transactions/credit").hasAnyRole("ADMIN", "USER")
+
+                        // 👇 Allow Admin (OWNER) to access everything
+                        .requestMatchers("/transactions/debit").hasRole("ADMIN")
+
+                        .anyRequest()
+                        .authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(
-                        AbstractHttpConfigurer
-                                ::disable); // 🚀 Disable form login (redirect loop fix!)
+                .formLogin(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
+
 }
 
 

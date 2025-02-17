@@ -22,7 +22,7 @@ public class Transaction {
     private double sum;
     private String currency;
     private double amountInINR;
-    private double amountInUSD;
+//    private double amountInUSD;
     private TransactionStatusType transactionStatus;
     private TransactionType transactionType;
 

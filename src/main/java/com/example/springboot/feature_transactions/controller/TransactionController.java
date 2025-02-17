@@ -1,5 +1,6 @@
 package com.example.springboot.feature_transactions.controller;
 
+import com.example.springboot.feature_report.dto.ReportRequestDto;
 import com.example.springboot.feature_report.enums.ReportType;
 import com.example.springboot.feature_report.models.Report;
 import com.example.springboot.feature_report.services.ReportService;
@@ -48,29 +49,4 @@ public class TransactionController {
         return transactionService.getTransactionById(id);
     }
 
-
-    /**
-     * API call to get report FOR WEEKLY, MONTHLY or YEARLY
-     *
-     * @return
-     */
-    @GetMapping("/reports")
-    public Report getWeeklyReport(@RequestParam ReportType reportType) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate;
-        switch (reportType) {
-            case WEEKLY:
-                startDate = now.minusWeeks(1);
-                break;
-            case MONTHLY:
-                startDate = now.minusMonths(1);
-                break;
-            case YEARLY:
-                startDate = now.minusYears(1);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid report type");
-        }
-        return reportService.generateReport(reportType,startDate, now);
-    }
 }

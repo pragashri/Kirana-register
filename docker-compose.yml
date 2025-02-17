@@ -19,7 +19,7 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - "27017:27017"  # Fixed port conflict
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
@@ -45,6 +45,22 @@ services:
     working_dir: /app
     command: ["java", "-jar", "spring-boot-0.0.1-SNAPSHOT.jar"]
 
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    restart: always
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
 volumes:
   postgres_data:
   mongo_data:
+  kafka_data:
+
+networks:
+  kafka_network:
+    driver: bridge

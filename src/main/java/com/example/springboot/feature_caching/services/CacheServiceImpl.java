@@ -1,18 +1,22 @@
 package com.example.springboot.feature_caching.services;
 
 import com.example.springboot.feature_caching.services.CacheService;
+import com.example.springboot.feature_report.models.Report;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class CacheServiceImpl implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+//    private final CacheService cacheService;
 
     public CacheServiceImpl(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
+//        this.cacheService = cacheService;
     }
 
     @Override
@@ -33,8 +37,11 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void evictReportCache() {
-        evict("report_weekly");
-        evict("report_monthly");
-        evict("report_yearly");
+        evict("report_WEEKLY");
+        evict("report_MONTHLY");
+        evict("report_YEARLY");
     }
+
+
+
 }

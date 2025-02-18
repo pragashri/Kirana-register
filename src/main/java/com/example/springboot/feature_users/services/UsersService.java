@@ -1,31 +1,19 @@
 package com.example.springboot.feature_users.services;
 
+import com.example.springboot.feature_users.dto.ApiResponse;
 import com.example.springboot.feature_users.entities.Users;
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface UsersService {
 
-    /**
-     * save user interface
-     *
-     * @param user
-     * @return
-     */
     Users save(Users user);
 
-    /**
-     * get user id by username interface
-     *
-     * @param username
-     * @return
-     */
     String getUserIdByUsername(String username);
 
-    /**
-     * get user roles by username interface
-     *
-     * @param username
-     * @return
-     */
     List<String> getUserRolesByUsername(String username);
+
+    ResponseEntity<ApiResponse> login(Users user);
+
+    ResponseEntity<ApiResponse> register(Users user);
 }

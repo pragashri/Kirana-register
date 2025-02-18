@@ -63,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The created credit transaction.
      */
     @Override
-    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public Transaction createCreditTransaction(Transaction transaction) {
         return processTransaction(transaction, TransactionType.CREDIT);
     }
@@ -76,7 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The created debit transaction.
      */
     @Override
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Transaction createDebitTransaction(Transaction transaction) {
         return processTransaction(transaction, TransactionType.DEBIT);
     }

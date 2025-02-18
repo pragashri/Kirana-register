@@ -14,11 +14,11 @@ public interface ProductService {
     Product updateProductDetails(Product product);
 
     /**
-     * interface for fetching product details
+     * Interface for fetching product details by ID.
      *
-     * @param id
-     * @param category
-     * @return
+     * @param id The unique identifier of the product.
+     * @return The product details.
      */
-    Product fetchProductDetails(String id, Category category);
+    Product fetchProductDetails(String id);
+
 }

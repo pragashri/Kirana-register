@@ -16,14 +16,15 @@ public class ProductDao {
     }
 
     /**
-     * Interacts with the repo to find details of the product
+     * Interacts with the repo to find details of the product by ID.
      *
-     * @param id
-     * @return
+     * @param id The unique identifier of the product.
+     * @return The product details.
      */
-    public Product findByIdAndCategory(String id, Category category) {
-        return productRepo.findByIdAndCategory(id, category);
+    public Product findById(String id) {
+        return productRepo.findById(id).orElse(null);
     }
+
 
     /**
      * saves the product to the DB through repo

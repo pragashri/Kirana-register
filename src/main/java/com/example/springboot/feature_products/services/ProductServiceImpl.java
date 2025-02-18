@@ -31,17 +31,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * implementation of fetching product detail through dao
+     * Implementation of fetching product details by ID.
      *
-     * @param id
-     * @return
+     * @param id The unique identifier of the product.
+     * @return The product details.
      */
     @Override
-    public Product fetchProductDetails(String id, Category category) {
-        if (id == null || category == null) {
+    public Product fetchProductDetails(String id) {
+        if (id == null) {
             return null;
         }
-
-        return productDao.findByIdAndCategory(id, category);
+        return productDao.findById(id);
     }
+
 }

@@ -96,11 +96,11 @@ public class TransactionServiceImpl implements TransactionService {
             registry = new StoreRegistry();
         }
 
-        Product product =
-                productRepo.findByIdAndCategory(transaction.getProductId(), Category.GROCERY);
+        Product product = productRepo.findById(transaction.getProductId()).orElse(null);
         if (product == null) {
             throw new RuntimeException(PRODUCT_NOT_FOUND);
         }
+
 
         double sum = transaction.getQuantity() * product.getPrice();
         transaction.setSum(sum);

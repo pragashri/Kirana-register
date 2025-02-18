@@ -29,13 +29,13 @@ public class ProductController {
     }
 
     /**
-     * A product detail can be found through this API using id and category of the product
+     * Fetches product details using the product ID.
      *
-     * @param id
-     * @return category
+     * @param id The unique identifier of the product.
+     * @return The product details.
      */
     @GetMapping("/fetch")
-    public Product fetchProductDetails(@RequestParam String id, @RequestParam Category category) {
-        return productService.fetchProductDetails(id, category);
+    public Product fetchProductDetails(@RequestParam String id) {
+        return productService.fetchProductDetails(id);
     }
 }

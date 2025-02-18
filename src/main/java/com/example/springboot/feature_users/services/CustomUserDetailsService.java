@@ -1,6 +1,6 @@
 package com.example.springboot.feature_users.services;
 
-import static com.example.springboot.feature_users.logConstants.LogConstants.*;
+import static com.example.springboot.feature_users.constants.UserLogConstants.*;
 
 import com.example.springboot.feature_users.entities.Users;
 import com.example.springboot.feature_users.repo.UsersRepo;

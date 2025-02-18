@@ -1,6 +1,6 @@
-package com.example.springboot.feature_users.logConstants;
+package com.example.springboot.feature_users.constants;
 
-public class LogConstants {
+public class UserLogConstants {
     public static String CALLED = "called";
     public static String SEARCH_USERNAME = "Searching for username: ";
     public static String USER_FOUND = "User found: ";

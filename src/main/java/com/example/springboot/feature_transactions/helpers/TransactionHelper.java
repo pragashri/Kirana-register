@@ -1,7 +1,7 @@
 package com.example.springboot.feature_transactions.helpers;
 
 import static com.example.springboot.feature_transactions.constants.TransactionsConstants.*;
-import static com.example.springboot.feature_transactions.logConstants.LogConstants.*;
+import static com.example.springboot.feature_transactions.constants.TransactionLogConstants.*;
 
 import com.example.springboot.feature_caching.services.CacheService;
 import com.example.springboot.feature_registry.entities.StoreRegistry;
@@ -100,7 +100,6 @@ public class TransactionHelper {
                 Map<String, Double> rates = (Map<String, Double>) response.getBody().get("rates");
                 double exchangeRate = rates.get(INR_CURRENCY);
 
-                // Store the exchange rate in cache with 1-hour expiry
                 cacheService.put(cacheKey, exchangeRate, 3600);
 
                 return TransactionUtils.roundToTwoDecimalPlaces(amount * exchangeRate);

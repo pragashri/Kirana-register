@@ -1,8 +1,8 @@
 package com.example.springboot.feature_transactions.services;
 
 import static com.example.springboot.feature_transactions.constants.TransactionsConstants.INR_CURRENCY;
-import static com.example.springboot.feature_transactions.logConstants.LogConstants.NOT_ENOUGH_STOCK;
-import static com.example.springboot.feature_transactions.logConstants.LogConstants.PRODUCT_NOT_FOUND;
+import static com.example.springboot.feature_transactions.constants.TransactionLogConstants.NOT_ENOUGH_STOCK;
+import static com.example.springboot.feature_transactions.constants.TransactionLogConstants.PRODUCT_NOT_FOUND;
 
 import com.example.springboot.feature_caching.services.CacheService;
 import com.example.springboot.feature_products.entities.Product;

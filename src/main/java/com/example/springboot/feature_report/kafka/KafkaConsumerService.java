@@ -46,18 +46,18 @@ public class KafkaConsumerService {
             groupId = "report_group",
             containerFactory = "kafkaListenerContainerFactory")
     public void listenReportRequest(KafkaMessage kafkaMessage) {
-        log.info(RECIEVED_MESSAGE + kafkaMessage);
+        log.info("{}{}", RECIEVED_MESSAGE, kafkaMessage);
 
         ReportType reportType = kafkaMessage.getReportType();
         List<Transaction> transactions = kafkaMessage.getTransactionList();
 
         Report report = ReportUtils.finalizeReport(transactions);
 
-        log.info(GENERATED_REPORT + reportType + ": " + report);
+        log.info("{}{}: {}", GENERATED_REPORT, reportType, report);
 
         String cacheKey = KEY + reportType.name();
 
         cacheService.put(cacheKey, report, TTL);
-        log.info(CACHED_REPORT + cacheKey);
+        log.info("{}{}", CACHED_REPORT, cacheKey);
     }
 }

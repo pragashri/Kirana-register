@@ -1,6 +1,6 @@
 package com.example.springboot.feature_users.controller;
 
-import static com.example.springboot.feature_users.logConstants.LogConstants.*;
+import static com.example.springboot.feature_users.constants.UserLogConstants.*;
 
 import com.example.springboot.feature_users.dao.UsersDao;
 import com.example.springboot.feature_users.dto.ApiResponse;

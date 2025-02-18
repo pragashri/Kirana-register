@@ -47,6 +47,8 @@ dependencies {
     implementation 'com.bucket4j:bucket4j-redis:8.9.0'
 //    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-redis:8.5.0'
     implementation 'org.redisson:redisson:3.22.0'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 test {

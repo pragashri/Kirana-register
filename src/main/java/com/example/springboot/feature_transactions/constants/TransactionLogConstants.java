@@ -1,6 +1,6 @@
-package com.example.springboot.feature_transactions.logConstants;
+package com.example.springboot.feature_transactions.constants;
 
-public class LogConstants {
+public class TransactionLogConstants {
     public static String FETCH_EXCHANGE_FROM_CACHE = "Fetching exchange rate from cache...";
     public static String FETCH_EXCHANGE_FROM_API = "Fetching exchange rate from API...";
     public static String EXCHANGE_FAILED = "Currency conversion failed: ";

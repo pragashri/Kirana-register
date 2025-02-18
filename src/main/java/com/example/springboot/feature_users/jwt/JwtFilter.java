@@ -1,6 +1,6 @@
 package com.example.springboot.feature_users.jwt;
 
-import static com.example.springboot.feature_users.logConstants.LogConstants.*;
+import static com.example.springboot.feature_users.constants.UserLogConstants.*;
 
 import com.example.springboot.feature_users.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;

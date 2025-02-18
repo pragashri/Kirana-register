@@ -12,18 +12,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users") // Specify MongoDB collection name
 public class Users {
 
-    @Id // MongoDB uses _id instead of @GeneratedValue
-    private String id;
+    @Id private String id;
 
     private String username;
 
     private String password;
 
-    private List<String> roles; // MongoDB stores lists natively
+    private List<String> roles;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @CreatedDate private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @LastModifiedDate private LocalDateTime updatedAt;
 }

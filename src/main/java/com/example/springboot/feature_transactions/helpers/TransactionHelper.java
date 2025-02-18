@@ -1,23 +1,21 @@
 package com.example.springboot.feature_transactions.helpers;
 
+import static com.example.springboot.feature_transactions.constants.TransactionsConstants.*;
+import static com.example.springboot.feature_transactions.logConstants.LogConstants.*;
+
 import com.example.springboot.feature_caching.services.CacheService;
 import com.example.springboot.feature_registry.entities.StoreRegistry;
 import com.example.springboot.feature_transactions.entities.Transaction;
 import com.example.springboot.feature_transactions.utils.TransactionUtils;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Map;
-
-import static com.example.springboot.feature_transactions.constants.TransactionsConstants.APIURL;
-import static com.example.springboot.feature_transactions.constants.TransactionsConstants.INR_CURRENCY;
-
 @Service
+@Slf4j
 public class TransactionHelper {
 
     private final CacheService cacheService;
@@ -36,7 +34,8 @@ public class TransactionHelper {
      * @param transaction
      * @return
      */
-    public StoreRegistry updateRegistryWhenCreditTransaction(StoreRegistry registry, Transaction transaction) {
+    public StoreRegistry updateRegistryWhenCreditTransaction(
+            StoreRegistry registry, Transaction transaction) {
         if (registry == null || transaction == null) {
             return null;
         }
@@ -50,7 +49,6 @@ public class TransactionHelper {
         return registry;
     }
 
-
     /**
      * helper method to update the registry when debit occurs
      *
@@ -58,7 +56,8 @@ public class TransactionHelper {
      * @param transaction
      * @return
      */
-    public StoreRegistry updateRegistryWhenDebitTransaction(StoreRegistry registry, Transaction transaction) {
+    public StoreRegistry updateRegistryWhenDebitTransaction(
+            StoreRegistry registry, Transaction transaction) {
         if (registry == null || transaction == null) {
             return null;
         }
@@ -72,12 +71,11 @@ public class TransactionHelper {
         return registry;
     }
 
-
     /**
-     * Converts the given amount to INR if it's in a different currency.
-     * Uses an external API for conversion rates, with caching in Redis.
+     * Converts the given amount to INR if it's in a different currency. Uses an external API for
+     * conversion rates, with caching in Redis.
      *
-     * @param amount   The amount to convert.
+     * @param amount The amount to convert.
      * @param currency The current currency of the amount.
      * @return The converted amount in INR.
      */
@@ -86,16 +84,16 @@ public class TransactionHelper {
             return TransactionUtils.roundToTwoDecimalPlaces(amount);
         }
 
-        String cacheKey = "currency_" + currency + "_INR";
+        String cacheKey = CURRENCY_KEY + currency + INR_KEY;
         Double cachedRate = cacheService.get(cacheKey, Double.class);
 
         if (cachedRate != null) {
-            System.out.println("Fetching exchange rate from cache...");
+            log.info(FETCH_EXCHANGE_FROM_CACHE);
             return TransactionUtils.roundToTwoDecimalPlaces(amount * cachedRate);
         }
 
         try {
-            System.out.println("Fetching exchange rate from API...");
+            log.info(FETCH_EXCHANGE_FROM_API);
             ResponseEntity<Map> response = restTemplate.getForEntity(APIURL, Map.class);
 
             if (response.getBody() != null && (boolean) response.getBody().get("success")) {
@@ -108,12 +106,9 @@ public class TransactionHelper {
                 return TransactionUtils.roundToTwoDecimalPlaces(amount * exchangeRate);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Currency conversion failed: " + e.getMessage());
+            throw new RuntimeException(EXCHANGE_FAILED + e.getMessage());
         }
 
         return amount;
     }
-
-
 }
-

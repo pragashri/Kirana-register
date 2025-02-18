@@ -1,5 +1,7 @@
 package com.example.springboot.feature_users.jwt;
 
+import static com.example.springboot.feature_users.logConstants.LogConstants.*;
+
 import com.example.springboot.feature_users.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,35 +20,45 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired private JwtUtils jwtUtils;
 
     @Autowired private CustomUserDetailsService userDetailsService;
 
+    /**
+     * Intercepts HTTP requests to check the Authorization header for a valid JWT token. If the
+     * token is valid, the user is authenticated, and the request proceeds. If the token is missing
+     * or invalid, an error response is sent with an Unauthorized status.
+     *
+     * @param request The HTTP request.
+     * @param response The HTTP response.
+     * @param filterChain The filter chain to pass the request along if authentication succeeds.
+     * @throws ServletException If the filter encounters an error during processing.
+     * @throws IOException If there is an error reading or writing the request/response.
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        System.out.println(
-                "JwtFilter - Request: " + request.getMethod() + " " + request.getRequestURI());
+        log.info("{}{} {}", JWT_REQUEST, request.getMethod(), request.getRequestURI());
 
-        // Bypass JWT filter for authentication endpoints
         String path = request.getServletPath();
-        if (path.equals("/users/login") || path.equals("/users/register") || path.startsWith("/actuator")) {
-            System.out.println("Skipping JWT filter for " + path);
+        if (path.equals("/users/login")
+                || path.equals("/users/register")
+                || path.startsWith("/actuator")) {
+            log.info("{}{}", SKIPPING_JWT_FILTER, path);
             filterChain.doFilter(request, response);
             return;
         }
 
         String authorizationHeader = request.getHeader("Authorization");
-        System.out.println("Authorization Header: " + authorizationHeader);
+        log.info("{}{}", AUTHORIZATION_HEADER, authorizationHeader);
 
-        // Validate Authorization header
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            System.out.println("No JWT token found in request, blocking access.");
-            response.sendError(
-                    HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: No JWT token found.");
+            log.info(JWT_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, JWT_NOT_FOUND);
             return;
         }
 
@@ -65,12 +78,11 @@ public class JwtFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println("User authenticated: " + username);
-                System.out.println("User roles: " + roles);
+                log.info("{}{}", USER_AUTHENTICATED, username);
+                log.info("{}{}", USER_ROLE, roles);
             } else {
-                System.out.println("Invalid JWT token, blocking access.");
-                response.sendError(
-                        HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid JWT.");
+                log.info(BLOCK_ACCESS);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, INVALID_JWT_TOKEN);
                 return;
             }
         }

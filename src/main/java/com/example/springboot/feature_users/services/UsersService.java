@@ -1,23 +1,31 @@
 package com.example.springboot.feature_users.services;
 
-import com.example.springboot.feature_users.entities.Users;;
+import com.example.springboot.feature_users.entities.Users;
 import java.util.List;
-import java.util.Optional;
 
 public interface UsersService {
-    public Users addUser(Users user);
 
-    public List<Users> getAllUsers();
+    /**
+     * save user interface
+     *
+     * @param user
+     * @return
+     */
+    Users save(Users user);
 
-    public Optional<Users> getUserById(Long id);
+    /**
+     * get user id by username interface
+     *
+     * @param username
+     * @return
+     */
+    String getUserIdByUsername(String username);
 
-    public Users saveUser(Users user);
-
-    public Users updateUser(Long uid, Users updatedUser);
-
-    public Users save(Users user);
-
-    public String getUserIdByUsername(String username);
-
-    public List<String> getUserRolesByUsername(String username);
+    /**
+     * get user roles by username interface
+     *
+     * @param username
+     * @return
+     */
+    List<String> getUserRolesByUsername(String username);
 }

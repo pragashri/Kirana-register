@@ -1,9 +1,12 @@
 package com.example.springboot.feature_report.models;
 
+import java.io.Serializable;
 import lombok.Data;
 
-import java.io.Serializable;
-
+/**
+ * Model representing a financial report containing credit, debit, and total amounts. Implements
+ * Serializable to allow caching and efficient data transfer.
+ */
 @Data
 public class Report implements Serializable {
     private double creditAmount;

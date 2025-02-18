@@ -1,12 +1,9 @@
 package com.example.springboot.feature_report.utils;
 
-import com.example.springboot.feature_products.dao.ProductDao;
 import com.example.springboot.feature_report.models.Report;
 import com.example.springboot.feature_transactions.entities.Transaction;
 import com.example.springboot.feature_transactions.enums.TransactionType;
-import com.example.springboot.feature_transactions.helpers.TransactionHelper;
 import com.example.springboot.feature_transactions.utils.TransactionUtils;
-
 import java.util.List;
 
 public class ReportUtils {
@@ -29,7 +26,7 @@ public class ReportUtils {
             } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
                 debitedAmount += transaction.getAmountInINR();
             }
-            totalAmount = creditedAmount-debitedAmount;
+            totalAmount = creditedAmount - debitedAmount;
         }
 
         Report report = new Report();
@@ -39,5 +36,4 @@ public class ReportUtils {
 
         return report;
     }
-
 }

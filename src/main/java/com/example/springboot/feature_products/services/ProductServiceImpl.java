@@ -34,7 +34,6 @@ public class ProductServiceImpl implements ProductService {
      * implementation of fetching product detail through dao
      *
      * @param id
-     * @param category
      * @return
      */
     @Override

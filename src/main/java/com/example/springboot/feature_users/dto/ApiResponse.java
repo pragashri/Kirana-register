@@ -16,7 +16,6 @@ public class ApiResponse {
     private Object errorResponse;
     private Object data;
 
-    // Custom Constructor for Success Response
     public ApiResponse(boolean success, String displayMsg, Object data) {
         this.success = success;
         this.displayMsg = displayMsg;

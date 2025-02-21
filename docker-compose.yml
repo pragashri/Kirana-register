@@ -99,53 +99,66 @@ services:
     networks:
       - kirana_store_network
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
-    container_name: elasticsearch
-    environment:
+  elasticsearch: # configures the Elasticsearch container.
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+    container_name: elasticsearch # Sets the name of the container to "elasticsearch."
+    environment: # Configures environment variables for the Elasticsearch container, such as node name, discovery type, memory lock, and Java options for heap size.
+      - node.name=elasticsearch
       - discovery.type=single-node
-      - xpack.security.enabled=false
-    ports:
-      - "9200:9200"
-    networks:
-      - elk_network
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.6.0
-    container_name: logstash
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
-    environment:
-      - LS_JAVA_OPTS=-Xmx512m -Xms512m
-    depends_on:
-      - elasticsearch
+      - es-data:/usr/share/elasticsearch/data
     ports:
-      - "5044:5044"
-      - "9600:9600"
+      - 9200:9200
     networks:
-      - elk_network
+      - elk
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.6.0
-    container_name: kibana
+  logstash: #c onfigures the Logstash container.
+    image: docker.elastic.co/logstash/logstash:7.15.2
+    container_name: logstash # Sets the name of the container to "logstash."
+    volumes:
+      - ./logstash/config/logstash.yml:/Users/pragashrinp/Downloads/gs-spring-boot-main/complete/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - /Users/pragashrinp/Downloads/gs-spring-boot-main/complete/logs/application.log # add your log file path to here
+      - ./logs:/usr/share/logstash/logs
+    ports:
+      - 5000:5000
+    environment:
+      - 'LS_JAVA_OPTS=-Xmx256m -Xms256m' # Sets the Java options for Logstash heap size.
+    networks:
+      - elk
     depends_on:
       - elasticsearch
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+  kibana: # Configures the Kibana container.
+    image: docker.elastic.co/kibana/kibana:7.15.2
+    container_name: kibana # Sets the name of the container to "kibana."
     ports:
-      - "5601:5601"
+      - 8500:5601
+    environment: # Sets the Elasticsearch URL and Node.js options for the Kibana container.
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - 'NODE_OPTIONS=--max-old-space-size=2048'
     networks:
-      - elk_network
+      - elk
+    depends_on:
+      - elasticsearch
 
 volumes:
   postgres_data:
   mongo_data:
   kafka_data:
+  es-data:
+    driver: local
 
 networks:
   kafka_network:
     driver: bridge
   kirana_store_network:
     driver: bridge
-  elk_network:
+  elk:
     driver: bridge

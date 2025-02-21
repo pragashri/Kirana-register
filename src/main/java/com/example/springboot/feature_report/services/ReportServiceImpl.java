@@ -70,7 +70,7 @@ public class ReportServiceImpl implements ReportService {
             kafkaMessage.setTransactionList(transactions);
 
             kafkaProducerService.sendReportRequest(
-                    kafkaMessage); // Sending the report request as DTO
+                    kafkaMessage);
         }
         return cachedReport;
     }

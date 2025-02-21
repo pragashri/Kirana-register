@@ -2,7 +2,6 @@ package com.example.springboot.feature_products.services;
 
 import com.example.springboot.feature_products.dao.ProductDao;
 import com.example.springboot.feature_products.entities.Product;
-import com.example.springboot.feature_products.enums.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

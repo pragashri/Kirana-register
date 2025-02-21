@@ -6,7 +6,6 @@ import static com.example.springboot.feature_transactions.constants.TransactionL
 
 import com.example.springboot.feature_caching.services.CacheService;
 import com.example.springboot.feature_products.entities.Product;
-import com.example.springboot.feature_products.enums.Category;
 import com.example.springboot.feature_products.repo.ProductRepo;
 import com.example.springboot.feature_registry.entities.StoreRegistry;
 import com.example.springboot.feature_registry.repo.StoreRegistryRepo;
@@ -16,7 +15,6 @@ import com.example.springboot.feature_transactions.enums.TransactionType;
 import com.example.springboot.feature_transactions.helpers.TransactionHelper;
 import com.example.springboot.feature_transactions.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service

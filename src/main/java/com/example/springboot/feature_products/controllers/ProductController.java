@@ -1,7 +1,6 @@
 package com.example.springboot.feature_products.controllers;
 
 import com.example.springboot.feature_products.entities.Product;
-import com.example.springboot.feature_products.enums.Category;
 import com.example.springboot.feature_products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

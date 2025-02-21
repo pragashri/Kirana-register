@@ -22,17 +22,14 @@ spotless {
 }
 
 dependencies {
-    // Spring Boot Web for REST API
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // Spring Boot Data MongoDB
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
-    // Testing dependencies (optional)
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.projectlombok:lombok'
-    compileOnly 'org.projectlombok:lombok:1.18.30'  // Use the latest version
+    compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
@@ -42,13 +39,12 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-//    implementation 'io.github.bucket4j:bucket4j-redis:6.3.0'
-//    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:6.2.0'
     implementation 'com.bucket4j:bucket4j-redis:8.9.0'
-//    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-redis:8.5.0'
     implementation 'org.redisson:redisson:3.22.0'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
 }
 
 test {

@@ -33,7 +33,6 @@ public class ReportController {
      */
     @GetMapping
     public Report getReport(@RequestParam ReportType reportType) {
-        // Call the report service to generate the report
         return reportService.generateReport(reportType);
     }
 }

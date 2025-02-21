@@ -43,6 +43,7 @@ public class TransactionHelper {
         double totalCreditedAmount = registry.getCreditedAmount() + transaction.getAmountInINR();
         double totalAmount = registry.getTotalAmount() + transaction.getAmountInINR();
 
+
         registry.setCreditedAmount(totalCreditedAmount);
         registry.setTotalAmount(totalAmount);
 
